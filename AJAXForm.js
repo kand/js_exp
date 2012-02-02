@@ -5,11 +5,16 @@ var AJAXForm = (function(){
 		 * 
 		 * @param string formId			Id of form to set up ajax submission for
 		 * @param string action			The action to assign to the form
-		 * @param function beforeAjax (Optional)	Function to run before to ajax submit
-		 * @param function ajaxComplete	(Optional)	Function to run once ajax completes,
-		 * 			gets a pointer to ajax return value
+		 * @param object params	Parameters to use in setup:
+		 * 					beforeAjax = function to call before submit
+		 * 					ajaxComplete = function called once ajax completes, gets
+		 * 						pointer to ajax response as first argument
 		 */
-		setUp: function(formId, action, beforeAjax, ajaxComplete){
+		setUp: function(formId, action, params){
+			// set up defaults for params
+			if(!params.beforeAjax) params.beforeAjax = null;
+			if(!params.afterAjax) params.afterAjax = null;
+			
 			// get form from document
 			var ajaxForm = document.getElementById(formId);
 			
@@ -21,7 +26,7 @@ var AJAXForm = (function(){
 			// set up submit function
 			ajaxForm.onsubmit = (function(e){
 				// call beforeAjax function
-				if(beforeAjax && !beforeAjax(e)) return false;
+				if(params.beforeAjax && !params.beforeAjax(e)) return false;
 				// prevent submission if already submitting
 				if(ajaxForm.submitting) return false;
 				
@@ -55,7 +60,7 @@ var AJAXForm = (function(){
 					ajaxForm.target = null;
 					delete ajaxForm.submitting;
 					
-					if(ajaxComplete) ajaxComplete(ajaxForm.ajaxResp);
+					if(params.ajaxComplete) params.ajaxComplete(ajaxForm.ajaxResp);
 				});
 			});
 		}
