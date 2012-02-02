@@ -3,10 +3,11 @@ var AJAXForm = (function(){
 		/**
 		 * Set up a form for ajax submission.
 		 * 
-		 * @param string formId	Id of form to set up ajax submission for
-		 * @param string action	The action to assign to the form
+		 * @param string formId			Id of form to set up ajax submission for
+		 * @param string action			The action to assign to the form
+		 * @param function beforeAjax (Optional)	Function to run before to ajax submit
 		 */
-		setUp: function(formId, action){
+		setUp: function(formId, action, beforeAjax){
 			// get form from document
 			var ajaxForm = document.getElementById(formId);
 			
@@ -17,10 +18,10 @@ var AJAXForm = (function(){
 			
 			// set up submit function
 			ajaxForm.onsubmit = (function(e){
+				// call beforeAjax function
+				if(!beforeAjax(e)) return false;
 				// prevent submission if already submitting
-				if(ajaxForm.submitting){
-					return false;
-				}
+				if(ajaxForm.submitting) return false;
 				
 				// remove any previous frames
 				if(ajaxForm.ajaxFrame){
@@ -42,18 +43,17 @@ var AJAXForm = (function(){
 				
 				// set up iframe response function
 				uploadFrame.onload = (function(e){
-					
 					// throw response inside form variable
 					ajaxForm.ajaxResp = uploadFrame.contentWindow.document.body.innerHTML;
-					
+				
 					// keep pointer to upload frame to delete later
 					ajaxForm.ajaxFrame = uploadFrame;
-					
+			
 					// clean up
-						ajaxForm.target = null;
-						delete ajaxForm.submitting;
-					});
+					ajaxForm.target = null;
+					delete ajaxForm.submitting;
 				});
-			}
-		};
+			});
+		}
+	};
 })();
