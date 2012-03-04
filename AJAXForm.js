@@ -25,7 +25,7 @@ var AJAXForm = (function(){
 			
 			// set up form properties
 			ajaxForm.method = 'post';
-			if(!params.enctype) ajaxForm.enctype = params.enctype;
+			if(params.enctype) ajaxForm.enctype = params.enctype;
 			if(params.action) ajaxForm.action = params.action;
 			
 			// set up submit function
