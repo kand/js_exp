@@ -4,24 +4,29 @@ var AJAXForm = (function(){
 		 * Set up a form for ajax submission.
 		 * 
 		 * @param string formId			Id of form to set up ajax submission for
-		 * @param string action			The action to assign to the form
 		 * @param object params	Parameters to use in setup:
 		 * 					beforeAjax = function to call before submit
 		 * 					ajaxComplete = function called once ajax completes, gets
 		 * 						pointer to ajax response as first argument
+		 *					action = [optional] action to call, will default to action
+		 *						specified on form
+		 *					enctype = [optional] enctype to use, will default to enctype
+		 *						specified on form
 		 */
-		setUp: function(formId, action, params){
+		setUp: function(formId, params){
 			// set up defaults for params
 			if(!params.beforeAjax) params.beforeAjax = null;
 			if(!params.afterAjax) params.afterAjax = null;
+			if(!params.action) params.action = null;
+			if(!params.enctype) params.enctype = 'multipart/form-data';
 			
 			// get form from document
 			var ajaxForm = document.getElementById(formId);
 			
 			// set up form properties
 			ajaxForm.method = 'post';
-			ajaxForm.enctype = 'multipart/form-data';
-			ajaxForm.action = action;
+			if(!params.enctype) ajaxForm.enctype = params.enctype;
+			if(params.action) ajaxForm.action = params.action;
 			
 			// set up submit function
 			ajaxForm.onsubmit = (function(e){
